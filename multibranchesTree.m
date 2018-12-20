@@ -13,8 +13,8 @@ classdef multibranchesTree < handle
         function obj = multibranchesTree()
             obj.rootNode = multibranchesTreeNode(0);
             obj.holdingHandle = obj.rootNode;
-            obj.mapLowerBondage = hex2dec('00ffffff');
-            obj.mapHigherBondage = hex2dec('ffffffff');
+            obj.mapLowerBondage = hex2dec('00ff');
+            obj.mapHigherBondage = hex2dec('010a');
             obj.allocatedIndex = obj.mapLowerBondage;
             obj.holdingValue = 0;
         end
@@ -24,24 +24,26 @@ classdef multibranchesTree < handle
             % If the value not exites, return coded index and add a new
             % node into the multi-branches tree.
             k = obj.holdingHandle.GetNextNode(value);
-            if k ~= []
+            if ~isempty(k)
                 obj.holdingHandle = k;
                 index = [];
             else
                 if obj.holdingHandle == obj.rootNode
                     index = value;
+                    n = multibranchesTreeNode(value);
+                    obj.rootNode.ForceAddEntry(value, n);
                 else
-                    index = obj.holdingHandle.GetIndex;
-                end
-                if obj.allocatedIndex < obj.mapHigherBondage
-                    %% If it has unused code.
-                    % Add a new node.
-                    obj.allocatedIndex = obj.allocatedIndex + 1;
-                    n = multibranchesTreeNode(obj.allocatedIndex);
-                    obj.holdingHandle.ForceAddEntry(value, n);
-                else
-                    %% If not.
-                    % Do nothing.
+                    index = obj.holdingHandle.GetIndex();
+                    if obj.allocatedIndex < obj.mapHigherBondage
+                        %% If it has unused code.
+                        % Add a new node.
+                        obj.allocatedIndex = obj.allocatedIndex + 1;
+                        n = multibranchesTreeNode(obj.allocatedIndex);
+                        obj.holdingHandle.ForceAddEntry(value, n);
+                    else
+                        %% If not.
+                        index = [index, value];
+                    end
                 end
                 obj.holdingHandle = obj.rootNode;
             end

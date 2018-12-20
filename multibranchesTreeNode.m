@@ -1,7 +1,7 @@
 classdef multibranchesTreeNode < handle
     properties(GetAccess=public)
         serialIndex = 0;
-        jumpListValue = zeros(0, 'uint32');
+        jumpListValue = zeros(0, 'uint16');
         jumpListHandle = [];
     end
     methods
@@ -25,6 +25,9 @@ classdef multibranchesTreeNode < handle
             else
                 nextHandle = [];
             end
+        end
+        function PreOrderTraverse(obj, refMat)
+            
         end
     end
 end
