@@ -3,8 +3,8 @@ classdef multibranchesTree < handle
     % Pass by refrence, just like java do.
     properties
         rootNode;
-        mapLowerBondage;
-        mapHigherBondage;
+        mapLowerBorder;
+        mapHigherBorder;
         holdingHandle;
         allocatedIndex;
     end
@@ -12,9 +12,9 @@ classdef multibranchesTree < handle
         function obj = multibranchesTree()
             obj.rootNode = multibranchesTreeNode([]);
             obj.holdingHandle = obj.rootNode;
-            obj.mapLowerBondage = hex2dec('00ff');
-            obj.mapHigherBondage = hex2dec('010a');
-            obj.allocatedIndex = obj.mapLowerBondage;
+            obj.mapLowerBorder = hex2dec('00ff');
+            obj.mapHigherBorder = hex2dec('ffff');
+            obj.allocatedIndex = obj.mapLowerBorder;
         end
         function index = AddValue(obj, value)
             %% Try to put a value to the multi-branches tree and get coded index.
@@ -33,7 +33,7 @@ classdef multibranchesTree < handle
                     obj.holdingHandle = n;
                 else
                     index = obj.holdingHandle.GetIndex();
-                    if obj.allocatedIndex < obj.mapHigherBondage
+                    if obj.allocatedIndex < obj.mapHigherBorder
                         %% If it has unused code.
                         % Add a new node.
                         obj.allocatedIndex = obj.allocatedIndex + 1;
@@ -66,8 +66,8 @@ classdef multibranchesTree < handle
             obj.holdingHandle = obj.rootNode;
         end
         function dict = GetDict(obj)
-            d = referenceMat(obj.allocatedIndex - obj.mapLowerBondage, 2, 'uint16');
-            obj.rootNode.PreOrderTraverse(d, obj.mapLowerBondage, obj.rootNode, 0, 0);
+            d = referenceMat(obj.allocatedIndex - obj.mapLowerBorder, 2, 'uint16');
+            obj.rootNode.PreOrderTraverse(d, obj.mapLowerBorder, obj.rootNode, 0, 0);
             dict = d.array;
         end
     end

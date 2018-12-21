@@ -1,5 +1,5 @@
 classdef referenceMat < handle
-    %% Array data struct like array in C++, which can pass by reference.
+    %% Array data struct like array in C++, which can be passed by reference.
     
     properties
         array
