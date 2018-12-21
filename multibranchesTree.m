@@ -5,18 +5,16 @@ classdef multibranchesTree < handle
         rootNode;
         mapLowerBondage;
         mapHigherBondage;
-        holdingValue;
         holdingHandle;
         allocatedIndex;
     end
     methods
         function obj = multibranchesTree()
-            obj.rootNode = multibranchesTreeNode(0);
+            obj.rootNode = multibranchesTreeNode([]);
             obj.holdingHandle = obj.rootNode;
             obj.mapLowerBondage = hex2dec('00ff');
             obj.mapHigherBondage = hex2dec('010a');
             obj.allocatedIndex = obj.mapLowerBondage;
-            obj.holdingValue = 0;
         end
         function index = AddValue(obj, value)
             %% Try to put a value to the multi-branches tree and get coded index.
@@ -29,9 +27,10 @@ classdef multibranchesTree < handle
                 index = [];
             else
                 if obj.holdingHandle == obj.rootNode
-                    index = value;
                     n = multibranchesTreeNode(value);
                     obj.rootNode.ForceAddEntry(value, n);
+                    index = [];
+                    obj.holdingHandle = n;
                 else
                     index = obj.holdingHandle.GetIndex();
                     if obj.allocatedIndex < obj.mapHigherBondage
@@ -40,13 +39,36 @@ classdef multibranchesTree < handle
                         obj.allocatedIndex = obj.allocatedIndex + 1;
                         n = multibranchesTreeNode(obj.allocatedIndex);
                         obj.holdingHandle.ForceAddEntry(value, n);
+                        l = obj.rootNode.GetNextNode(value);
+                        if ~isempty(l)
+                            obj.holdingHandle = l;
+                        else
+                            n = multibranchesTreeNode(value);
+                            obj.rootNode.ForceAddEntry(value, n);
+                            obj.holdingHandle = n;
+                        end
                     else
                         %% If not.
-                        index = [index, value];
+                        l = obj.rootNode.GetNextNode(value);
+                        if ~isempty(l)
+                            obj.holdingHandle = l;
+                        else
+                            n = multibranchesTreeNode(value);
+                            obj.rootNode.ForceAddEntry(value, n);
+                            obj.holdingHandle = n;
+                        end
                     end
                 end
-                obj.holdingHandle = obj.rootNode;
             end
+        end
+        function index = Eof(obj)
+            index = obj.holdingHandle.GetIndex();
+            obj.holdingHandle = obj.rootNode;
+        end
+        function dict = GetDict(obj)
+            d = referenceMat(obj.allocatedIndex - obj.mapLowerBondage, 2, 'uint16');
+            obj.rootNode.PreOrderTraverse(d, obj.mapLowerBondage, obj.rootNode, 0, 0);
+            dict = d.array;
         end
     end
 end

@@ -26,8 +26,14 @@ classdef multibranchesTreeNode < handle
                 nextHandle = [];
             end
         end
-        function PreOrderTraverse(obj, refMat)
-            
+        function PreOrderTraverse(obj, refMat, offset, rootNode, parentNodeIndex, entryValue)
+            if obj ~= rootNode && obj.GetIndex > offset
+                refMat.array(obj.GetIndex - offset, 1) = parentNodeIndex;
+                refMat.array(obj.GetIndex - offset, 2) = entryValue;
+            end
+            for i = 1:length(obj.jumpListValue)
+                obj.jumpListHandle(i).PreOrderTraverse(refMat, offset, rootNode, obj.GetIndex, obj.jumpListValue(i));
+            end
         end
     end
 end
