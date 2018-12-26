@@ -1,7 +1,7 @@
 %% A function to generate compressend file.
 % offset
-% +000000 4 Bytes Unsigned Int: Resolution: pixels in a column.
-% +000004 4 Bytes Unsigned Int: Resolution: pixels in a row.
+% +000000 4 Bytes Unsigned Int: Resolution: height.
+% +000004 4 Bytes Unsigned Int: Resolution: width.
 % +000008 2 Bytes Unsigned Int: Dict Length: n
 %  ==== Section 1: Dict Area ====
 %  ---- Item 1 ----

@@ -1,0 +1,12 @@
+img = imread('test1.jpg');
+hash = ImageSHA256Hash(img);
+figure;
+imshow(img);
+title(['Before Compress SHA256: ', hash]);
+set(gca, 'fontsize', 16);
+CompressImage(img, 'test1.elp');
+newimg = UncompressImage('test1.elp');
+figure;
+imshow(newimg);
+title(['After Compress SHA256: ', hash]);
+set(gca, 'fontsize', 16);
